@@ -14,26 +14,30 @@
  */
 
 import AVKit
-import Foundation
+import SwiftUI
 
-class SoundManager: ObservableObject
+protocol SoundControl {
+    func playMusicPlayer(data: Data)
+    func stopMusicPlayer()
+    func playEffectPlayer1(data: Data)
+    func stopEffectPlayer1()
+}
+
+@Observable
+class SoundManager: SoundControl
 {
-    @Published var musicPlayer: AVAudioPlayer?
-    @Published var effectPlayer1: AVAudioPlayer?
-    @Published var effectPlayer2: AVAudioPlayer?
-    @Published var ambiencePlayer1: AVAudioPlayer?
-    @Published var ambiencePlayer2: AVAudioPlayer?
+    var musicPlayer: AVAudioPlayer?
+    var effectPlayer1: AVAudioPlayer?
+    var effectPlayer2: AVAudioPlayer?
+    var ambiencePlayer1: AVAudioPlayer?
+    var ambiencePlayer2: AVAudioPlayer?
     
     func playMusicPlayer(data: Data)
     {
         do
         {
-            musicPlayer = try AVAudioPlayer(data: data, fileTypeHint: "mp3")
+            musicPlayer = retrieveAVAudioPlayer(data: data)
             musicPlayer?.play()
-        }
-        catch
-        {
-            print(error.localizedDescription)
         }
     }
     
@@ -49,12 +53,8 @@ class SoundManager: ObservableObject
     {
         do
         {
-            effectPlayer1 = try AVAudioPlayer(data: data, fileTypeHint: "mp3")
+            effectPlayer1 = retrieveAVAudioPlayer(data: data)
             effectPlayer1?.play()
-        }
-        catch
-        {
-            print(error.localizedDescription)
         }
     }
     
@@ -66,4 +66,16 @@ class SoundManager: ObservableObject
         }
     }
     
+    func retrieveAVAudioPlayer(data: Data) -> AVAudioPlayer? {
+        do
+        {
+            return try AVAudioPlayer(data: data, fileTypeHint: "mp3")
+            
+        }
+        catch
+        {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
 }
